@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AppHttpService 使用说明文档</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+            font-size: 2em;
+        }
+        
+        h3 {
+            color: #555;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        h4 {
+            color: #666;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-size: 1.3em;
+        }
+        
+        h5 {
+            color: #777;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        h6 {
+            color: #888;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: "Consolas", "Monaco", "Courier New", monospace;
+            font-size: 0.9em;
+            color: #e83e8c;
+        }
+        
+        pre {
+            background-color: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 20px 0;
+            line-height: 1.5;
+        }
+        
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+            font-size: 0.9em;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background-color: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+        
+        hr {
+            border: none;
+            border-top: 2px solid #ecf0f1;
+            margin: 30px 0;
+        }
+        
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .toc {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .toc ul {
+            list-style-type: none;
+            margin-left: 0;
+        }
+        
+        .toc li {
+            margin-bottom: 5px;
+        }
+        
+        .feature-list {
+            list-style: none;
+            margin-left: 0;
+        }
+        
+        .feature-list li:before {
+            content: "✅ ";
+            margin-right: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+            
+            pre {
+                font-size: 0.85em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AppHttpService 使用说明文档</h1>
+
+        <h2>概述</h2>
+        <p><code>AppHttpService</code> 是一个基于 Dio 封装的 HTTP 请求服务类，提供了统一的网络请求接口、错误处理机制、自动请求头管理和多种请求类型支持。该类主要用于 Flutter 应用中的网络请求处理。</p>
+
+        <h2>主要特性</h2>
+        <ul class="feature-list">
+            <li>支持 GET、POST、PUT 请求类型</li>
+            <li>自动管理请求头（设备信息、用户 Token、加密标识等）</li>
+            <li>统一的响应数据模型（ResultModel）</li>
+            <li>完善的错误处理机制（网络错误、业务错误、解析错误）</li>
+            <li>自动登录失效处理</li>
+            <li>图片上传功能</li>
+            <li>图片验证码获取</li>
+            <li>自动加载指示器管理</li>
+            <li>详细的日志记录</li>
+        </ul>
+
+        <h2>目录结构</h2>
+        <div class="toc">
+            <ul>
+                <li><a href="#枚举类型">枚举类型</a></li>
+                <li><a href="#常量定义">常量定义</a></li>
+                <li><a href="#数据模型">数据模型</a></li>
+                <li><a href="#核心类">核心类</a></li>
+                <li><a href="#扩展方法">扩展方法</a></li>
+                <li><a href="#使用示例">使用示例</a></li>
+                <li><a href="#错误处理">错误处理</a></li>
+                <li><a href="#配置说明">配置说明</a></li>
+            </ul>
+        </div>
+
+        <hr>
+
+        <h2 id="枚举类型">枚举类型</h2>
+
+        <h3>AppHttpServiceType</h3>
+        <p>请求类型枚举，支持三种 HTTP 方法：</p>
+        <pre><code>enum AppHttpServiceType { 
+  post,  // POST 请求
+  get,   // GET 请求
+  put    // PUT 请求
+}</code></pre>
+
+        <hr>
+
+        <h2 id="常量定义">常量定义</h2>
+
+        <h3>业务状态码</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>常量名</th>
+                    <th>值</th>
+                    <th>说明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>successfulCode</code></td>
+                    <td>200</td>
+                    <td>请求成功</td>
+                </tr>
+                <tr>
+                    <td><code>verifyingCode</code></td>
+                    <td>2002</td>
+                    <td>认证中</td>
+                </tr>
+                <tr>
+                    <td><code>verifySuccessCode</code></td>
+                    <td>2003</td>
+                    <td>认证通过</td>
+                </tr>
+                <tr>
+                    <td><code>notLoginCode</code></td>
+                    <td>[800]</td>
+                    <td>登录失效（列表）</td>
+                </tr>
+                <tr>
+                    <td><code>otherDeviceEnterGameCode</code></td>
+                    <td>8116</td>
+                    <td>其他设备进入游戏</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr>
+
+        <h2 id="数据模型">数据模型</h2>
+
+        <h3>ResultModel</h3>
+        <p>统一的响应数据模型，包含三个字段：</p>
+        <pre><code>class ResultModel {
+  int? code;      // 状态码
+  String? msg;    // 消息提示
+  dynamic data;   // 响应数据
+}</code></pre>
+
+        <p><strong>方法：</strong></p>
+        <ul>
+            <li><code>ResultModel.fromJson(Map&lt;String, dynamic&gt; json)</code> - 从 JSON 创建实例</li>
+            <li><code>Map&lt;String, dynamic&gt; toJson()</code> - 转换为 JSON</li>
+        </ul>
+
+        <hr>
+
+        <h2 id="核心类">核心类</h2>
+
+        <h3>AppHttpService</h3>
+        <p>HTTP 请求服务主类。</p>
+
+        <h4>静态属性</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>属性</th>
+                    <th>类型</th>
+                    <th>说明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>xrkimGlobal</code></td>
+                    <td><code>String</code></td>
+                    <td>全局 XRKIMG 值，用于后续请求携带</td>
+                </tr>
+                <tr>
+                    <td><code>isXRKENC</code></td>
+                    <td><code>bool</code></td>
+                    <td>是否启用加密（影响 Content-Type）</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4>实例属性</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>属性</th>
+                    <th>类型</th>
+                    <th>说明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>dio</code></td>
+                    <td><code>Dio</code></td>
+                    <td>Dio 实例</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4>构造函数</h4>
+        <pre><code>AppHttpService()</code></pre>
+        <p>自动设置默认请求头，并交由 <code>DebugManager</code> 附加调试功能。</p>
+
+        <h4>方法说明</h4>
+
+        <h5>1. setGlobalXRKIMG</h5>
+        <p>设置全局 XRKIMG 值，影响后续新建的 <code>AppHttpService</code> 实例。</p>
+        <pre><code>static void setGlobalXRKIMG(String value)</code></pre>
+        <p><strong>参数：</strong></p>
+        <ul>
+            <li><code>value</code> - XRKIMG 值</li>
+        </ul>
+        <p><strong>使用场景：</strong> 通常在获取验证码后，将返回的 XRKIMG 设置为全局值。</p>
+
+        <hr>
+
+        <h5>2. setHeaders</h5>
+        <p>动态添加请求头。</p>
+        <pre><code>void setHeaders(Map&lt;String, dynamic&gt; headers)</code></pre>
+        <p><strong>参数：</strong></p>
+        <ul>
+            <li><code>headers</code> - 要添加的请求头键值对</li>
+        </ul>
+
+        <hr>
+
+        <h5>3. requestApi</h5>
+        <p>核心请求方法，支持 GET、POST、PUT 请求。</p>
+        <pre><code>Future&lt;ResultModel&gt; requestApi({
+  AppHttpServiceType type = AppHttpServiceType.get,
+  required String url,
+  Map&lt;String, dynamic&gt;? parameters,
+  bool showToast = true,
+  bool goToLogin = false,
+})</code></pre>
+        <p><strong>参数：</strong></p>
+        <ul>
+            <li><code>type</code> - 请求类型（默认 GET）</li>
+            <li><code>url</code> - 请求地址（必需）</li>
+            <li><code>parameters</code> - 请求参数（可选）</li>
+            <li><code>showToast</code> - 是否显示错误提示（默认 true）</li>
+            <li><code>goToLogin</code> - 登录失效时是否跳转登录页（默认 false）</li>
+        </ul>
+        <p><strong>返回值：</strong> <code>Future&lt;ResultModel&gt;</code></p>
+        <p><strong>特性：</strong></p>
+        <ul>
+            <li>自动显示/隐藏加载指示器</li>
+            <li>15 秒后自动关闭加载指示器（防止卡死）</li>
+            <li>自动处理响应数据解析</li>
+            <li>自动处理业务错误码</li>
+            <li>自动处理网络异常</li>
+        </ul>
+
+        <hr>
+
+        <h5>4. uploadImages</h5>
+        <p>上传多张图片。</p>
+        <pre><code>Future&lt;dynamic&gt; uploadImages({
+  required List&lt;AssetEntity&gt; entities,
+  required String url,
+})</code></pre>
+        <p><strong>参数：</strong></p>
+        <ul>
+            <li><code>entities</code> - 图片资源列表（AssetEntity）</li>
+            <li><code>url</code> - 上传接口地址</li>
+        </ul>
+        <p><strong>返回值：</strong> <code>Future&lt;dynamic&gt;</code> - 返回 <code>ResultModel</code> 或错误处理结果</p>
+        <p><strong>说明：</strong></p>
+        <ul>
+            <li>使用 <code>FormData</code> 格式上传</li>
+            <li>字段名为 <code>images[]</code></li>
+            <li>自动处理上传成功/失败</li>
+        </ul>
+
+        <hr>
+
+        <h5>5. httpUrl</h5>
+        <p>使用 <code>http</code> 包进行简单的 GET 请求（不经过 Dio）。</p>
+        <pre><code>Future&lt;String&gt; httpUrl(String url)</code></pre>
+        <p><strong>参数：</strong></p>
+        <ul>
+            <li><code>url</code> - 请求地址</li>
+        </ul>
+        <p><strong>返回值：</strong> <code>Future&lt;String&gt;</code> - 响应体字符串</p>
+        <p><strong>使用场景：</strong> 适用于不需要复杂配置的简单请求。</p>
+
+        <hr>
+
+        <h5>6. getCaptchaImage</h5>
+        <p>获取图片验证码。</p>
+        <pre><code>Future&lt;Map&lt;String, dynamic&gt;&gt; getCaptchaImage(String url)</code></pre>
+        <p><strong>参数：</strong></p>
+        <ul>
+            <li><code>url</code> - 验证码接口地址</li>
+        </ul>
+        <p><strong>返回值：</strong> <code>Map&lt;String, dynamic&gt;</code> 包含：</p>
+        <ul>
+            <li><code>success</code> - 是否成功</li>
+            <li><code>imageBytes</code> - 图片字节数据</li>
+            <li><code>xrkim</code> - 响应头中的 XRKIMG 值</li>
+            <li><code>error</code> - 错误信息（失败时）</li>
+        </ul>
+        <p><strong>说明：</strong></p>
+        <ul>
+            <li>自动从响应头提取 XRKIMG</li>
+            <li>建议在获取成功后调用 <code>setGlobalXRKIMG</code> 设置全局值</li>
+        </ul>
+
+        <h3>默认请求头</h3>
+        <p><code>AppHttpService</code> 会自动设置以下请求头：</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>请求头</th>
+                    <th>说明</th>
+                    <th>来源</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>Content-Type</code></td>
+                    <td>内容类型</td>
+                    <td><code>isXRKENC ? 'text/plain' : 'application/json'</code></td>
+                </tr>
+                <tr>
+                    <td><code>devicetype</code></td>
+                    <td>设备类型代码</td>
+                    <td><code>DeviceInfoManager</code></td>
+                </tr>
+                <tr>
+                    <td><code>appversion</code></td>
+                    <td>应用版本号</td>
+                    <td><code>DeviceInfoManager</code></td>
+                </tr>
+                <tr>
+                    <td><code>devicebrand</code></td>
+                    <td>设备品牌</td>
+                    <td><code>DeviceInfoManager</code></td>
+                </tr>
+                <tr>
+                    <td><code>devicemodel</code></td>
+                    <td>设备型号</td>
+                    <td><code>DeviceInfoManager</code></td>
+                </tr>
+                <tr>
+                    <td><code>device</code></td>
+                    <td>设备ID</td>
+                    <td><code>DeviceInfoManager</code></td>
+                </tr>
+                <tr>
+                    <td><code>appsystem</code></td>
+                    <td>操作系统版本</td>
+                    <td><code>DeviceInfoManager</code></td>
+                </tr>
+                <tr>
+                    <td><code>user-agent</code></td>
+                    <td>User-Agent</td>
+                    <td><code>DeviceInfoManager</code></td>
+                </tr>
+                <tr>
+                    <td><code>buildnumber</code></td>
+                    <td>构建号</td>
+                    <td><code>DeviceInfoManager</code></td>
+                </tr>
+                <tr>
+                    <td><code>XRKENC</code></td>
+                    <td>加密标识</td>
+                    <td>当 <code>isXRKENC = true</code> 时添加</td>
+                </tr>
+                <tr>
+                    <td><code>XRKIMG</code></td>
+                    <td>图片验证码标识</td>
+                    <td>当 <code>xrkimGlobal</code> 不为空时添加</td>
+                </tr>
+                <tr>
+                    <td><code>X-token</code></td>
+                    <td>用户 Token</td>
+                    <td>当用户已登录时添加</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p><strong>设备类型代码说明：</strong></p>
+        <ul>
+            <li>1: PC</li>
+            <li>2: ANDROID_H5</li>
+            <li>3: IOS_H5</li>
+            <li>4: ANDROID_APP</li>
+            <li>5: IOS_APP</li>
+        </ul>
+
+        <hr>
+
+        <h2 id="扩展方法">扩展方法</h2>
+
+        <h3>AppHttpServiceExtension</h3>
+        <p>通过扩展方法提供错误处理和提示功能。</p>
+
+        <h4>1. showToast</h4>
+        <p>显示提示信息。</p>
+        <pre><code>void showToast(String? message)</code></pre>
+
+        <hr>
+
+        <h4>2. handleBusinessError</h4>
+        <p>处理业务逻辑错误。</p>
+        <pre><code>ResultModel handleBusinessError({
+  required ResultModel resultModel,
+  required String url,
+  required bool showToast,
+  required bool goToLogin,
+})</code></pre>
+        <p><strong>功能：</strong></p>
+        <ul>
+            <li>记录错误日志</li>
+            <li>显示错误提示（可选）</li>
+            <li>处理登录失效跳转（可选）</li>
+        </ul>
+
+        <hr>
+
+        <h4>3. handleParseError</h4>
+        <p>处理数据解析错误。</p>
+        <pre><code>ResultModel handleParseError({
+  required String url,
+  required dynamic responseData,
+  required bool showToast,
+})</code></pre>
+        <p><strong>功能：</strong></p>
+        <ul>
+            <li>记录解析错误日志</li>
+            <li>返回错误 ResultModel（code: 0, msg: "数据解析错误"）</li>
+            <li>显示错误提示（可选）</li>
+        </ul>
+
+        <hr>
+
+        <h4>4. handleNetworkError</h4>
+        <p>处理网络错误。</p>
+        <pre><code>ResultModel handleNetworkError({
+  required DioException e,
+  required String url,
+  required bool showToast,
+  required bool goToLogin,
+})</code></pre>
+        <p><strong>功能：</strong></p>
+        <ul>
+            <li>延迟 1 秒后关闭加载指示器</li>
+            <li>尝试解析服务器错误响应</li>
+            <li>处理各种网络异常类型</li>
+            <li>显示友好的错误提示</li>
+            <li>处理登录失效跳转（可选）</li>
+        </ul>
+
+        <hr>
+
+        <h4>5. getNetworkErrorMessage</h4>
+        <p>根据 DioException 类型返回友好的错误信息。</p>
+        <pre><code>String getNetworkErrorMessage(DioException e)</code></pre>
+        <p><strong>错误类型映射：</strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>DioExceptionType</th>
+                    <th>错误信息</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>connectionTimeout</code></td>
+                    <td>连接超时，请检查网络</td>
+                </tr>
+                <tr>
+                    <td><code>sendTimeout</code></td>
+                    <td>发送超时，请重试</td>
+                </tr>
+                <tr>
+                    <td><code>receiveTimeout</code></td>
+                    <td>接收超时，请重试</td>
+                </tr>
+                <tr>
+                    <td><code>badResponse</code></td>
+                    <td>服务器响应错误</td>
+                </tr>
+                <tr>
+                    <td><code>cancel</code></td>
+                    <td>请求已取消</td>
+                </tr>
+                <tr>
+                    <td><code>connectionError</code></td>
+                    <td>网络连接失败，请检查网络</td>
+                </tr>
+                <tr>
+                    <td><code>badCertificate</code></td>
+                    <td>证书验证失败</td>
+                </tr>
+                <tr>
+                    <td><code>unknown</code></td>
+                    <td>未知网络错误</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr>
+
+        <h4>6. getHttpStatusMessage</h4>
+        <p>根据 HTTP 状态码返回友好的错误信息。</p>
+        <pre><code>String getHttpStatusMessage(int statusCode)</code></pre>
+        <p><strong>状态码映射：</strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>状态码</th>
+                    <th>错误信息</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>400</td>
+                    <td>请求参数错误</td>
+                </tr>
+                <tr>
+                    <td>401</td>
+                    <td>未授权，请重新登录</td>
+                </tr>
+                <tr>
+                    <td>403</td>
+                    <td>禁止访问</td>
+                </tr>
+                <tr>
+                    <td>404</td>
+                    <td>请求的资源不存在</td>
+                </tr>
+                <tr>
+                    <td>405</td>
+                    <td>请求方法不允许</td>
+                </tr>
+                <tr>
+                    <td>408</td>
+                    <td>请求超时</td>
+                </tr>
+                <tr>
+                    <td>409</td>
+                    <td>请求冲突</td>
+                </tr>
+                <tr>
+                    <td>422</td>
+                    <td>请求参数验证失败</td>
+                </tr>
+                <tr>
+                    <td>429</td>
+                    <td>请求过于频繁，请稍后再试</td>
+                </tr>
+                <tr>
+                    <td>500</td>
+                    <td>服务器内部错误，请稍后再试</td>
+                </tr>
+                <tr>
+                    <td>502</td>
+                    <td>网关错误</td>
+                </tr>
+                <tr>
+                    <td>503</td>
+                    <td>服务暂时不可用</td>
+                </tr>
+                <tr>
+                    <td>504</td>
+                    <td>网关超时</td>
+                </tr>
+                <tr>
+                    <td>其他</td>
+                    <td>服务器错误(状态码)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr>
+
+        <h2 id="使用示例">使用示例</h2>
+
+        <h3>1. 基本 GET 请求</h3>
+        <pre><code>final httpService = AppHttpService();
+final result = await httpService.requestApi(
+  type: AppHttpServiceType.get,
+  url: 'https://api.example.com/users',
+  parameters: {'page': 1, 'limit': 10},
+);
+
+if (result.code == successfulCode) {
+  print('请求成功: ${result.data}');
+} else {
+  print('请求失败: ${result.msg}');
+}</code></pre>
+
+        <h3>2. POST 请求</h3>
+        <pre><code>final httpService = AppHttpService();
+final result = await httpService.requestApi(
+  type: AppHttpServiceType.post,
+  url: 'https://api.example.com/login',
+  parameters: {
+    'username': 'user123',
+    'password': 'pass123',
+  },
+  showToast: true,
+  goToLogin: false,
+);</code></pre>
+
+        <h3>3. 上传图片</h3>
+        <pre><code>final httpService = AppHttpService();
+final result = await httpService.uploadImages(
+  entities: selectedImages, // List&lt;AssetEntity&gt;
+  url: 'https://api.example.com/upload',
+);
+
+if (result is ResultModel && result.code == successfulCode) {
+  print('上传成功: ${result.data}');
+}</code></pre>
+
+        <h3>4. 获取验证码</h3>
+        <pre><code>final httpService = AppHttpService();
+final result = await httpService.getCaptchaImage(
+  'https://api.example.com/captcha',
+);
+
+if (result['success'] == true) {
+  final imageBytes = result['imageBytes'] as Uint8List;
+  final xrkim = result['xrkim'] as String;
+  
+  // 设置全局 XRKIMG，后续请求会自动携带
+  AppHttpService.setGlobalXRKIMG(xrkim);
+  
+  // 显示验证码图片
+  // Image.memory(imageBytes)
+}</code></pre>
+
+        <h3>5. 自定义请求头</h3>
+        <pre><code>final httpService = AppHttpService();
+httpService.setHeaders({
+  'Custom-Header': 'custom-value',
+  'Authorization': 'Bearer token123',
+});
+
+final result = await httpService.requestApi(
+  url: 'https://api.example.com/protected',
+);</code></pre>
+
+        <h3>6. 不显示错误提示</h3>
+        <pre><code>final result = await httpService.requestApi(
+  url: 'https://api.example.com/api',
+  showToast: false, // 不显示 Toast 提示
+);</code></pre>
+
+        <h3>7. 登录失效不跳转</h3>
+        <pre><code>final result = await httpService.requestApi(
+  url: 'https://api.example.com/api',
+  goToLogin: false, // 登录失效时不自动跳转登录页
+);</code></pre>
+
+        <hr>
+
+        <h2 id="错误处理">错误处理</h2>
+
+        <h3>错误处理流程</h3>
+        <ol>
+            <li><strong>网络错误</strong> → <code>handleNetworkError</code>
+                <ul>
+                    <li>连接超时、网络异常等</li>
+                    <li>自动显示友好提示</li>
+                    <li>延迟关闭加载指示器</li>
+                </ul>
+            </li>
+            <li><strong>数据解析错误</strong> → <code>handleParseError</code>
+                <ul>
+                    <li>响应数据格式不正确</li>
+                    <li>返回 code: 0, msg: "数据解析错误"</li>
+                </ul>
+            </li>
+            <li><strong>业务逻辑错误</strong> → <code>handleBusinessError</code>
+                <ul>
+                    <li>服务器返回的业务错误码（非 200）</li>
+                    <li>根据错误码决定是否跳转登录</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h3>登录失效处理</h3>
+        <p>当服务器返回错误码 <code>800</code>（<code>notLoginCode</code>）且 <code>goToLogin = true</code> 时：</p>
+        <ol>
+            <li>调用 <code>UserManager().outLogin()</code> 退出登录</li>
+            <li>延迟 150ms 后跳转到登录页</li>
+        </ol>
+
+        <hr>
+
+        <h2 id="配置说明">配置说明</h2>
+
+        <h3>启用加密模式</h3>
+        <pre><code>AppHttpService.isXRKENC = true;</code></pre>
+        <p>启用后，<code>Content-Type</code> 将变为 <code>text/plain</code>，并自动添加 <code>XRKENC: 1</code> 请求头。</p>
+
+        <h3>设置全局 XRKIMG</h3>
+        <pre><code>AppHttpService.setGlobalXRKIMG('your-xrkim-value');</code></pre>
+        <p>设置后，所有新建的 <code>AppHttpService</code> 实例都会自动携带该请求头。</p>
+
+        <hr>
+
+        <h2>注意事项</h2>
+        <ol>
+            <li><strong>加载指示器管理</strong>
+                <ul>
+                    <li>请求开始时会自动显示加载指示器</li>
+                    <li>请求成功或失败后会自动隐藏</li>
+                    <li>15 秒后会自动关闭（防止卡死）</li>
+                </ul>
+            </li>
+            <li><strong>错误提示</strong>
+                <ul>
+                    <li>默认会显示错误 Toast 提示</li>
+                    <li>可通过 <code>showToast: false</code> 关闭</li>
+                </ul>
+            </li>
+            <li><strong>登录失效</strong>
+                <ul>
+                    <li>默认不会自动跳转登录页</li>
+                    <li>需要设置 <code>goToLogin: true</code> 才会自动跳转</li>
+                </ul>
+            </li>
+            <li><strong>验证码处理</strong>
+                <ul>
+                    <li>获取验证码后建议立即调用 <code>setGlobalXRKIMG</code> 设置全局值</li>
+                    <li>后续请求会自动携带该值</li>
+                </ul>
+            </li>
+            <li><strong>日志记录</strong>
+                <ul>
+                    <li>所有请求和错误都会记录到日志</li>
+                    <li>使用 <code>Logger()</code> 进行日志输出</li>
+                </ul>
+            </li>
+            <li><strong>Debug 模式</strong>
+                <ul>
+                    <li>在 Debug 模式下，<code>DebugManager</code> 会自动附加调试功能</li>
+                    <li>Release 模式下会自动跳过</li>
+                </ul>
+            </li>
+        </ol>
+
+        <hr>
+
+        <h2>依赖项</h2>
+        <ul>
+            <li><code>dio</code> - HTTP 客户端</li>
+            <li><code>fluttertoast</code> - Toast 提示</li>
+            <li><code>logger</code> - 日志记录</li>
+            <li><code>wechat_assets_picker</code> - 图片选择器</li>
+            <li><code>http</code> - 简单 HTTP 请求</li>
+        </ul>
+
+        <hr>
+
+        <h2>相关文件</h2>
+        <ul>
+            <li><code>AppApiManage.dart</code> - API 地址管理</li>
+            <li><code>DeviceInfoManager.dart</code> - 设备信息管理</li>
+            <li><code>UserModeManage.dart</code> - 用户管理</li>
+            <li><code>DebugManager.dart</code> - 调试管理</li>
+            <li><code>loading_components.dart</code> - 加载指示器组件</li>
+        </ul>
+
+        <hr>
+
+        <h2>更新日志</h2>
+        <ul>
+            <li>支持自动请求头管理</li>
+            <li>支持加密模式</li>
+            <li>支持图片验证码获取</li>
+            <li>完善的错误处理机制</li>
+            <li>自动登录失效处理</li>
+        </ul>
+
+        <hr>
+
+        <h2>作者</h2>
+        <p>本文档基于 <code>AppHttpService.dart</code> 代码自动生成。</p>
+    </div>
+</body>
+</html>
+
